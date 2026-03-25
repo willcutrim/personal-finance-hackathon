@@ -173,27 +173,6 @@
 
         setSubmitLoadingState();
     });
-
-    document.querySelectorAll(".password-toggle-btn").forEach(function (btn) {
-        btn.addEventListener("click", function () {
-            var wrapper = btn.closest(".password-field-wrapper");
-            var input = wrapper.querySelector("input");
-            var eyeOpen = btn.querySelector(".eye-open");
-            var eyeClosed = btn.querySelector(".eye-closed");
-
-            if (input.type === "password") {
-                input.type = "text";
-                eyeOpen.hidden = true;
-                eyeClosed.hidden = false;
-                btn.setAttribute("aria-label", "Ocultar senha");
-            } else {
-                input.type = "password";
-                eyeOpen.hidden = false;
-                eyeClosed.hidden = true;
-                btn.setAttribute("aria-label", "Mostrar senha");
-            }
-        });
-    });
 })();
 </script>
 {% endblock %}

@@ -81,6 +81,21 @@
     align-items: center;
 }
 
+.dashboard-inline-filter {
+    flex-wrap: nowrap;
+}
+
+.dashboard-inline-filter input[type="date"] {
+    width: 140px;
+    padding: 6px 8px;
+    font-size: 0.82rem;
+}
+
+.btn-filter-sm {
+    padding: 6px 12px;
+    font-size: 0.82rem;
+}
+
 .filter-bar.row {
     --bs-gutter-x: 10px;
     --bs-gutter-y: 10px;

@@ -1,5 +1,31 @@
 {% extends 'partials/base_list_content.html' %}
 
+{% block list_filters %}
+<form
+    id="list-filter-form"
+    method="get"
+    class="panel mb-3 p-3"
+    {% if list_hx_enabled %}
+    hx-get=""
+    hx-target="{{ list_hx_target }}"
+    hx-swap="{{ list_hx_swap }}"
+    hx-push-url="{{ list_hx_push_url }}"
+    hx-trigger="submit"
+    {% endif %}
+>
+    <div class="form-layout row g-3 align-items-end">
+        <div class="form-field col-12 col-sm-6 col-md-4">
+            <label for="{{ filter_form.nome.id_for_label }}">{{ filter_form.nome.label }}</label>
+            {{ filter_form.nome }}
+        </div>
+        <div class="col-12 col-md-4 d-flex gap-2">
+            <button type="submit" class="btn btn-secondary flex-fill">Filtrar</button>
+            <a href="{% url 'finance:categoria_list' %}" class="btn btn-outline flex-fill">Limpar</a>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
 {% block list_header %}
 <header class="panel-header d-flex align-items-center justify-content-between">
     <div>

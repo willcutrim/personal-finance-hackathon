@@ -33,3 +33,16 @@ class AuthService(BaseService):
 
     def logout_user(self):
         logout(self.request)
+
+    def update_profile(self, first_name, last_name, email):
+        user = self.user
+        existing = UserRepository.get_by_email(email)
+        if existing and existing.pk != user.pk:
+            raise ValidationError('Este e-mail já está cadastrado por outro usuário.')
+        return UserRepository.update_profile(
+            user, first_name=first_name, last_name=last_name, email=email,
+        )
+
+    def change_password(self, new_password):
+        UserRepository.change_password(self.user, new_password)
+        login(self.request, self.user)

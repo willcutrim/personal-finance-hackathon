@@ -62,26 +62,34 @@ class LancamentoForm(forms.ModelForm):
         return valor
 
 
+class CategoriaFilterForm(forms.Form):
+    nome = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Buscar por nome...',
+        }),
+        label='Nome',
+    )
+
+
 class LancamentoFilterForm(forms.Form):
     tipo = forms.ChoiceField(
         choices=[('', 'Todos os tipos')] + list(TipoChoices.choices),
         required=False,
-        widget=forms.Select(attrs={'class': 'form-select form-select-sm'}),
     )
     categoria = forms.ModelChoiceField(
         queryset=Categoria.objects.none(),
         required=False,
         empty_label='Todas as categorias',
-        widget=forms.Select(attrs={'class': 'form-select form-select-sm'}),
     )
     data_inicio = forms.DateField(
         required=False,
-        widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control form-control-sm'}),
+        widget=forms.DateInput(attrs={'type': 'date'}),
         label='De',
     )
     data_fim = forms.DateField(
         required=False,
-        widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control form-control-sm'}),
+        widget=forms.DateInput(attrs={'type': 'date'}),
         label='Até',
     )
 

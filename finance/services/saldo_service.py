@@ -10,21 +10,29 @@ class SaldoService:
     Recebe o user como argumento — não herda BaseService.
     """
 
-    def __init__(self, user):
+    def __init__(self, user, data_inicio=None, data_fim=None):
         self.user = user
+        self.data_inicio = data_inicio
+        self.data_fim = data_fim
 
     def calcular_saldo(self):
-        return LancamentoRepository.saldo_por_tipo(self.user)
+        return LancamentoRepository.saldo_por_tipo(
+            self.user, data_inicio=self.data_inicio, data_fim=self.data_fim,
+        )
 
     def resumo_por_categoria(self, tipo=TipoChoices.DESPESA):
-        rows = LancamentoRepository.totais_por_categoria(self.user, tipo)
+        rows = LancamentoRepository.totais_por_categoria(
+            self.user, tipo, data_inicio=self.data_inicio, data_fim=self.data_fim,
+        )
         return {
             'labels': [row['categoria__nome'] for row in rows],
             'valores': [float(row['total']) for row in rows],
         }
 
     def resumo_mensal(self, ano):
-        rows = list(LancamentoRepository.totais_mensais(self.user, ano))
+        rows = list(LancamentoRepository.totais_mensais(
+            self.user, ano, data_inicio=self.data_inicio, data_fim=self.data_fim,
+        ))
         meses = list(range(1, 13))
         receitas_por_mes = {row['mes']: float(row['total']) for row in rows if row['tipo'] == TipoChoices.RECEITA}
         despesas_por_mes = {row['mes']: float(row['total']) for row in rows if row['tipo'] == TipoChoices.DESPESA}
@@ -35,7 +43,9 @@ class SaldoService:
         }
 
     def ultimos_lancamentos(self, limit=5):
-        return LancamentoRepository.ultimos(self.user, limit=limit)
+        return LancamentoRepository.ultimos(
+            self.user, limit=limit, data_inicio=self.data_inicio, data_fim=self.data_fim,
+        )
 
     def calcular_percentual_economia(self, total_receitas, total_despesas):
         if not total_receitas:

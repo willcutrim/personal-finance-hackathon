@@ -10,7 +10,7 @@ from core.bases.views import (
     BaseServiceUpdateView,
 )
 from core.mixins import AppLoginRequiredMixin, FlashMessageMixin, ServiceObjectMixin
-from finance.forms import CategoriaForm, LancamentoFilterForm, LancamentoForm
+from finance.forms import CategoriaFilterForm, CategoriaForm, LancamentoFilterForm, LancamentoForm
 from finance.services.categoria_service import CategoriaService
 from finance.services.lancamento_service import LancamentoService
 
@@ -24,8 +24,23 @@ class CategoriaListView(BaseServiceListView):
     service_class = CategoriaService
     paginate_by = 15
 
+    def get_filter_form(self):
+        if not hasattr(self, '_filter_form'):
+            self._filter_form = CategoriaFilterForm(data=self.request.GET or None)
+        return self._filter_form
+
+    def get_service_filters(self):
+        form = self.get_filter_form()
+        filters = {}
+        if form.is_valid():
+            nome = form.cleaned_data.get('nome')
+            if nome:
+                filters['nome__icontains'] = nome
+        return filters
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['filter_form'] = self.get_filter_form()
         context['page_title'] = 'Categorias'
         context['page_subtitle'] = 'Gerencie as categorias de receitas e despesas.'
         context['empty_title'] = 'Nenhuma categoria cadastrada'

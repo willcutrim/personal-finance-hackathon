@@ -1,10 +1,12 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
+from django.http import HttpResponse
+from django.template.response import TemplateResponse
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import FormView
 
-from account.forms import LoginForm, RegisterForm
+from account.forms import ChangePasswordForm, LoginForm, ProfileEditForm, RegisterForm
 from account.services.auth_service import AuthService
 from core.bases.views import BaseTemplateView
 from core.mixins import AnonymousOnlyMixin, AppLoginRequiredMixin, FlashMessageMixin, HtmxRequestMixin
@@ -81,5 +83,81 @@ class ProfileView(BaseTemplateView):
     template_name = 'account/profile.html'
 
 
-class SettingsView(BaseTemplateView):
+class ProfileEditModalView(AppLoginRequiredMixin, FlashMessageMixin, View):
+    success_message = 'Perfil atualizado com sucesso.'
+
+    def get(self, request, *args, **kwargs):
+        form = ProfileEditForm(user=request.user)
+        return TemplateResponse(
+            request,
+            'account/partials/profile_edit_modal.html',
+            {'form': form},
+        )
+
+    def post(self, request, *args, **kwargs):
+        form = ProfileEditForm(request.POST, user=request.user)
+        if form.is_valid():
+            service = AuthService(request)
+            try:
+                service.update_profile(
+                    first_name=form.cleaned_data['first_name'],
+                    last_name=form.cleaned_data['last_name'],
+                    email=form.cleaned_data['email'],
+                )
+                self.add_success_message()
+                response = HttpResponse(status=204)
+                response['HX-Trigger'] = 'profileChanged'
+                return response
+            except ValidationError as exc:
+                message = exc.messages[0] if exc.messages else str(exc)
+                form.add_error('email', message)
+        return TemplateResponse(
+            request,
+            'account/partials/profile_edit_modal.html',
+            {'form': form},
+        )
+
+
+class SettingsView(AppLoginRequiredMixin, FlashMessageMixin, HtmxRequestMixin, FormView):
     template_name = 'account/settings.html'
+    form_class = ProfileEditForm
+    success_url = reverse_lazy('accounts:settings')
+    success_message = 'Perfil atualizado com sucesso.'
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
+    def form_valid(self, form):
+        service = AuthService(self.request)
+        try:
+            service.update_profile(
+                first_name=form.cleaned_data['first_name'],
+                last_name=form.cleaned_data['last_name'],
+                email=form.cleaned_data['email'],
+            )
+            self.add_success_message()
+            return self.redirect_response(self.get_success_url())
+        except ValidationError as exc:
+            message = exc.messages[0] if exc.messages else str(exc)
+            form.add_error('email', message)
+            return self.form_invalid(form)
+
+
+class ChangePasswordView(AppLoginRequiredMixin, FlashMessageMixin, HtmxRequestMixin, FormView):
+    template_name = 'account/change_password.html'
+    form_class = ChangePasswordForm
+    success_url = reverse_lazy('accounts:change_password')
+    success_message = 'Senha alterada com sucesso.'
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
+    def form_valid(self, form):
+        service = AuthService(self.request)
+        service.change_password(new_password=form.cleaned_data['new_password1'])
+        self.add_success_message()
+        return self.redirect_response(self.get_success_url())

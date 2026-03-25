@@ -2,6 +2,33 @@ from django import forms
 from django.contrib.auth.password_validation import validate_password
 
 
+class ProfileEditForm(forms.Form):
+    first_name = forms.CharField(
+        label='Nome',
+        max_length=150,
+        required=False,
+        widget=forms.TextInput(attrs={'placeholder': 'Seu nome'}),
+    )
+    last_name = forms.CharField(
+        label='Sobrenome',
+        max_length=150,
+        required=False,
+        widget=forms.TextInput(attrs={'placeholder': 'Seu sobrenome'}),
+    )
+    email = forms.EmailField(
+        label='E-mail',
+        widget=forms.EmailInput(attrs={'placeholder': 'seu@email.com'}),
+    )
+
+    def __init__(self, *args, user=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._user = user
+        if user:
+            self.fields['first_name'].initial = user.first_name
+            self.fields['last_name'].initial = user.last_name
+            self.fields['email'].initial = user.email
+
+
 class RegisterForm(forms.Form):
     username = forms.CharField(
         label='Nome de usuário',
@@ -53,3 +80,43 @@ class LoginForm(forms.Form):
 
     def __init__(self, *args, user=None, **kwargs):
         super().__init__(*args, **kwargs)
+
+
+class ChangePasswordForm(forms.Form):
+    current_password = forms.CharField(
+        label='Senha atual',
+        widget=forms.PasswordInput(attrs={'placeholder': 'Digite sua senha atual', 'autocomplete': 'current-password'}),
+    )
+    new_password1 = forms.CharField(
+        label='Nova senha',
+        widget=forms.PasswordInput(attrs={'placeholder': 'Mínimo 8 caracteres', 'autocomplete': 'new-password'}),
+        min_length=8,
+    )
+    new_password2 = forms.CharField(
+        label='Confirmar nova senha',
+        widget=forms.PasswordInput(attrs={'placeholder': 'Repita a nova senha', 'autocomplete': 'new-password'}),
+    )
+
+    def __init__(self, *args, user=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._user = user
+
+    def clean_current_password(self):
+        current_password = self.cleaned_data.get('current_password')
+        if self._user and not self._user.check_password(current_password):
+            raise forms.ValidationError('A senha atual está incorreta.')
+        return current_password
+
+    def clean_new_password1(self):
+        new_password1 = self.cleaned_data.get('new_password1')
+        if new_password1:
+            validate_password(new_password1, self._user)
+        return new_password1
+
+    def clean(self):
+        cleaned_data = super().clean()
+        new_password1 = cleaned_data.get('new_password1')
+        new_password2 = cleaned_data.get('new_password2')
+        if new_password1 and new_password2 and new_password1 != new_password2:
+            self.add_error('new_password2', 'As senhas não coincidem.')
+        return cleaned_data

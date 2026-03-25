@@ -11,7 +11,16 @@
         <h1 class="page-title" id="pageHeaderTitle">Dashboard</h1>
         <p class="page-subtitle" id="pageHeaderSubtitle">Visão geral das suas finanças.</p>
     </div>
-    <div class="page-header-tools">
+    <div class="page-header-tools d-flex flex-wrap align-items-center gap-2">
+        <form method="get" class="d-flex align-items-center gap-2 dashboard-inline-filter" id="dashboard-filter-form">
+            {{ filter_form.data_inicio }}
+            <span class="text-muted" style="font-size:.82rem">até</span>
+            {{ filter_form.data_fim }}
+            <button type="submit" class="btn btn-secondary btn-filter-sm">Filtrar</button>
+            {% if filter_form.data_inicio.value or filter_form.data_fim.value %}
+            <a href="{% url 'dashboard:painel' %}" class="btn btn-outline btn-filter-sm">Limpar</a>
+            {% endif %}
+        </form>
         <button
             class="btn btn-success"
             hx-get="{% url 'finance:lancamento_create_receita' %}"

@@ -34,12 +34,17 @@ class LancamentoRepository(BaseRepository):
         return cls.model.objects.create(**data)
 
     @classmethod
-    def saldo_por_tipo(cls, user):
-        resultado = (
-            cls.get_queryset(user=user)
-            .values('tipo')
-            .annotate(total=Sum('valor'))
-        )
+    def _apply_date_range(cls, qs, data_inicio=None, data_fim=None):
+        if data_inicio:
+            qs = qs.filter(data__gte=data_inicio)
+        if data_fim:
+            qs = qs.filter(data__lte=data_fim)
+        return qs
+
+    @classmethod
+    def saldo_por_tipo(cls, user, data_inicio=None, data_fim=None):
+        qs = cls._apply_date_range(cls.get_queryset(user=user), data_inicio, data_fim)
+        resultado = qs.values('tipo').annotate(total=Sum('valor'))
         totais = {row['tipo']: row['total'] or Decimal('0') for row in resultado}
         receitas = totais.get(TipoChoices.RECEITA, Decimal('0'))
         despesas = totais.get(TipoChoices.DESPESA, Decimal('0'))
@@ -50,27 +55,30 @@ class LancamentoRepository(BaseRepository):
         }
 
     @classmethod
-    def totais_por_categoria(cls, user, tipo):
+    def totais_por_categoria(cls, user, tipo, data_inicio=None, data_fim=None):
+        qs = cls._apply_date_range(cls.get_queryset(user=user), data_inicio, data_fim)
         return (
-            cls.get_queryset(user=user)
-            .filter(tipo=tipo)
+            qs.filter(tipo=tipo)
             .values('categoria__nome')
             .annotate(total=Sum('valor'))
             .order_by('-total')
         )
 
     @classmethod
-    def totais_mensais(cls, user, ano):
+    def totais_mensais(cls, user, ano, data_inicio=None, data_fim=None):
         from django.db.models.functions import ExtractMonth
+        qs = cls._apply_date_range(
+            cls.get_queryset(user=user).filter(data__year=ano),
+            data_inicio, data_fim,
+        )
         return (
-            cls.get_queryset(user=user)
-            .filter(data__year=ano)
-            .annotate(mes=ExtractMonth('data'))
+            qs.annotate(mes=ExtractMonth('data'))
             .values('mes', 'tipo')
             .annotate(total=Sum('valor'))
             .order_by('mes')
         )
 
     @classmethod
-    def ultimos(cls, user, limit=5):
-        return cls.get_queryset(user=user)[:limit]
+    def ultimos(cls, user, limit=5, data_inicio=None, data_fim=None):
+        qs = cls._apply_date_range(cls.get_queryset(user=user), data_inicio, data_fim)
+        return qs[:limit]

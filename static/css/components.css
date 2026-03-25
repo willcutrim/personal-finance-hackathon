@@ -517,8 +517,14 @@ textarea:focus {
     display: none;
 }
 
+.dropdown-menu:not([hidden]) {
+    display: block;
+}
+
 .dropdown-item {
     display: flex;
+    align-items: center;
+    gap: 8px;
     width: 100%;
     padding: 10px 12px;
     color: var(--color-text);
@@ -531,6 +537,29 @@ textarea:focus {
 
 .dropdown-item:hover {
     background: #f4f8ff;
+}
+
+.dropdown-item svg {
+    flex-shrink: 0;
+    color: var(--color-text-muted);
+}
+
+.dropdown-divider {
+    height: 1px;
+    margin: 4px 0;
+    background: var(--color-border);
+}
+
+.dropdown-item-danger {
+    color: var(--color-danger);
+}
+
+.dropdown-item-danger svg {
+    color: var(--color-danger);
+}
+
+.dropdown-item-danger:hover {
+    background: #fff1f1;
 }
 
 .confirm-modal {

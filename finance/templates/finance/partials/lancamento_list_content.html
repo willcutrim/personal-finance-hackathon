@@ -13,21 +13,21 @@
     hx-trigger="change, submit"
     {% endif %}
 >
-    <div class="row g-2 align-items-end">
-        <div class="col-12 col-sm-6 col-md-3">
-            {{ filter_form.tipo.label_tag }}
+    <div class="form-layout row g-3 align-items-end">
+        <div class="form-field col-12 col-sm-6 col-md-3">
+            <label for="{{ filter_form.tipo.id_for_label }}">{{ filter_form.tipo.label }}</label>
             {{ filter_form.tipo }}
         </div>
-        <div class="col-12 col-sm-6 col-md-3">
-            {{ filter_form.categoria.label_tag }}
+        <div class="form-field col-12 col-sm-6 col-md-3">
+            <label for="{{ filter_form.categoria.id_for_label }}">{{ filter_form.categoria.label }}</label>
             {{ filter_form.categoria }}
         </div>
-        <div class="col-12 col-sm-6 col-md-2">
-            {{ filter_form.data_inicio.label_tag }}
+        <div class="form-field col-12 col-sm-6 col-md-2">
+            <label for="{{ filter_form.data_inicio.id_for_label }}">{{ filter_form.data_inicio.label }}</label>
             {{ filter_form.data_inicio }}
         </div>
-        <div class="col-12 col-sm-6 col-md-2">
-            {{ filter_form.data_fim.label_tag }}
+        <div class="form-field col-12 col-sm-6 col-md-2">
+            <label for="{{ filter_form.data_fim.id_for_label }}">{{ filter_form.data_fim.label }}</label>
             {{ filter_form.data_fim }}
         </div>
         <div class="col-12 col-md-2 d-flex gap-2">

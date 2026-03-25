@@ -1,0 +1,50 @@
+<div class="modal fade" id="profileEditModal" tabindex="-1"
+     aria-labelledby="profileEditModalLabel" aria-modal="true" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="profileEditModalLabel">Editar perfil</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <form
+                hx-post="{% url 'accounts:profile_edit' %}"
+                hx-target="#profile-modal-container"
+                hx-swap="innerHTML"
+            >
+                {% csrf_token %}
+                <div class="modal-body form-layout">
+                    {% if form.non_field_errors %}
+                    <div class="form-alert form-alert-error">
+                        {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <div class="form-field {% if form.first_name.errors %}has-error{% endif %}">
+                        <label for="{{ form.first_name.id_for_label }}">Nome</label>
+                        {{ form.first_name }}
+                        {% for error in form.first_name.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+                    </div>
+
+                    <div class="form-field {% if form.last_name.errors %}has-error{% endif %}">
+                        <label for="{{ form.last_name.id_for_label }}">Sobrenome</label>
+                        {{ form.last_name }}
+                        {% for error in form.last_name.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+                    </div>
+
+                    <div class="form-field {% if form.email.errors %}has-error{% endif %}">
+                        <label for="{{ form.email.id_for_label }}">
+                            E-mail <span class="required-mark">*</span>
+                        </label>
+                        {{ form.email }}
+                        {% for error in form.email.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn">Salvar alterações</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
