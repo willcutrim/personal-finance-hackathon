@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Excluir Categoria | FinControl{% endblock %}
+{% block page_title %}Excluir Categoria{% endblock %}
+{% block page_subtitle %}Esta ação não pode ser desfeita.{% endblock %}
+
+{% block content %}
+<div class="card p-4">
+    <p class="mb-4">
+        Tem certeza que deseja excluir a categoria <strong>{{ categoria.nome }}</strong>
+        (<span class="badge {% if categoria.tipo == 'RECEITA' %}badge-receita{% else %}badge-despesa{% endif %}">{{ categoria.get_tipo_display }}</span>)?
+    </p>
+
+    {% include 'components/confirm_action_form.html' with
+        form_id='categoria-delete-form'
+        submit_label='Excluir categoria'
+        confirm_title='Excluir categoria'
+        confirm_message='Tem certeza que deseja excluir esta categoria? Esta ação não pode ser desfeita.'
+        confirm_button_label='Sim, excluir'
+        cancel_url=cancel_url|default:''
+    %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.getElementById('categoria-delete-form').setAttribute(
+        'action', '{% url "finance:categoria_delete" categoria.pk %}'
+    );
+</script>
+{% endblock %}

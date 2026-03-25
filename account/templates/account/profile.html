@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Meu Perfil | FinControl{% endblock %}
+{% block page_title %}Meu Perfil{% endblock %}
+{% block page_subtitle %}Informações da sua conta.{% endblock %}
+
+{% block content %}
+<div class="card p-4">
+    <div class="row g-3">
+        <div class="col-12 col-md-6">
+            <label class="form-label text-muted">Nome de usuário</label>
+            <p class="fw-semibold">{{ user.username }}</p>
+        </div>
+        <div class="col-12 col-md-6">
+            <label class="form-label text-muted">E-mail</label>
+            <p class="fw-semibold">{{ user.email|default:'Não informado' }}</p>
+        </div>
+        <div class="col-12 col-md-6">
+            <label class="form-label text-muted">Nome completo</label>
+            <p class="fw-semibold">{{ user.get_full_name|default:'Não informado' }}</p>
+        </div>
+        <div class="col-12 col-md-6">
+            <label class="form-label text-muted">Membro desde</label>
+            <p class="fw-semibold">{{ user.date_joined|date:'d/m/Y' }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,71 @@
+<div class="modal fade" id="lancamentoModal" tabindex="-1"
+     aria-labelledby="lancamentoModalLabel" aria-modal="true" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold d-flex align-items-center gap-2" id="lancamentoModalLabel">
+                    {% if tipo == 'RECEITA' %}
+                        <span class="badge badge-receita">Receita</span>
+                    {% else %}
+                        <span class="badge badge-despesa">Despesa</span>
+                    {% endif %}
+                    <span>{{ tipo_label }}</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <form
+                hx-post="{{ form_action }}"
+                hx-target="#lancamento-modal-container"
+                hx-swap="innerHTML"
+            >
+                {% csrf_token %}
+                <div class="modal-body form-layout">
+                    {% if form.non_field_errors %}
+                    <div class="form-alert form-alert-error">
+                        {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <div class="form-field {% if form.descricao.errors %}has-error{% endif %}">
+                        <label for="{{ form.descricao.id_for_label }}">
+                            Descrição <span class="required-mark">*</span>
+                        </label>
+                        {{ form.descricao }}
+                        {% for error in form.descricao.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+                    </div>
+
+                    <div class="form-field {% if form.valor.errors %}has-error{% endif %}">
+                        <label for="{{ form.valor.id_for_label }}">
+                            Valor <span class="required-mark">*</span>
+                        </label>
+                        {{ form.valor }}
+                        {% for error in form.valor.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+                    </div>
+
+                    <div class="form-field {% if form.data.errors %}has-error{% endif %}">
+                        <label for="{{ form.data.id_for_label }}">
+                            Data <span class="required-mark">*</span>
+                        </label>
+                        {{ form.data }}
+                        {% for error in form.data.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+                    </div>
+
+                    <div class="form-field {% if form.categoria.errors %}has-error{% endif %}">
+                        <label for="{{ form.categoria.id_for_label }}">
+                            Categoria <span class="required-mark">*</span>
+                        </label>
+                        {{ form.categoria }}
+                        {% for error in form.categoria.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn {% if tipo == 'RECEITA' %}btn-success{% else %}btn-expense{% endif %}">
+                        Salvar {{ tipo_label }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

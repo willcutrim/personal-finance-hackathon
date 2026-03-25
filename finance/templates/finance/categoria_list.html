@@ -1,0 +1,42 @@
+{% extends 'base_list.html' %}
+
+{% block page_title %}{{ page_title }}{% endblock %}
+{% block page_subtitle %}{{ page_subtitle }}{% endblock %}
+
+{% block page_header %}
+<header class="page-header">
+    <div>
+        <h1 class="page-title" id="pageHeaderTitle">{{ page_title }}</h1>
+        <p class="page-subtitle" id="pageHeaderSubtitle">{{ page_subtitle }}</p>
+    </div>
+    <div class="page-header-tools">
+        <a href="{% url 'finance:categoria_create' %}" class="btn">Nova categoria</a>
+    </div>
+</header>
+{% endblock %}
+
+{% block page_actions %}{% endblock %}
+
+{% block list_before %}
+<div id="categoria-modal-container"></div>
+{% endblock %}
+
+{% block list_partial_template %}finance/partials/categoria_list_content.html{% endblock %}
+
+{% block extra_js %}
+<script>
+document.body.addEventListener('htmx:afterSwap', function (evt) {
+    if (evt.detail.target.id !== 'categoria-modal-container') return;
+    var el = document.getElementById('deleteModal');
+    if (!el) return;
+    document.querySelectorAll('.modal-backdrop').forEach(function (b) { b.remove(); });
+    document.body.classList.remove('modal-open');
+    document.body.style.removeProperty('overflow');
+    document.body.style.removeProperty('padding-right');
+    new bootstrap.Modal(el).show();
+});
+document.addEventListener('categoriaChanged', function () {
+    window.location.reload();
+});
+</script>
+{% endblock %}

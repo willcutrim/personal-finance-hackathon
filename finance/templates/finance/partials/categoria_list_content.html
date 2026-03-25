@@ -1,0 +1,40 @@
+{% extends 'partials/base_list_content.html' %}
+
+{% block list_header %}
+<header class="panel-header d-flex align-items-center justify-content-between">
+    <div>
+        <h2 class="panel-title">Categorias</h2>
+        <p class="panel-subtitle">{{ paginator.count }} categoria{{ paginator.count|pluralize:"s" }} cadastrada{{ paginator.count|pluralize:"s" }}</p>
+    </div>
+</header>
+{% endblock %}
+
+{% block table_head %}
+<th>Nome</th>
+<th>Tipo</th>
+<th>Criado em</th>
+<th class="table-actions-head">Ações</th>
+{% endblock %}
+
+{% block table_rows %}
+{% for categoria in categorias %}
+<tr>
+    <td><strong>{{ categoria.nome }}</strong></td>
+    <td>
+        <span class="badge {% if categoria.tipo == 'RECEITA' %}badge-receita{% else %}badge-despesa{% endif %}">
+            {{ categoria.get_tipo_display }}
+        </span>
+    </td>
+    <td class="text-muted">{{ categoria.criado_em|date:'d/m/Y' }}</td>
+    <td class="table-actions">
+        <a href="{% url 'finance:categoria_update' categoria.pk %}" class="btn btn-secondary">Editar</a>
+        <button
+                class="btn btn-danger"
+                hx-get="{% url 'finance:categoria_delete' categoria.pk %}"
+                hx-target="#categoria-modal-container"
+                hx-swap="innerHTML"
+            >Excluir</button>
+    </td>
+</tr>
+{% endfor %}
+{% endblock %}

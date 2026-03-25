@@ -173,9 +173,27 @@
         drawDonutChart("donutChartCategorias");
     }
 
+    function setupPasswordToggles() {
+        document.querySelectorAll('.password-toggle-btn').forEach(function (btn) {
+            var wrapper = btn.closest('.password-field-wrapper');
+            if (!wrapper) return;
+            var input = wrapper.querySelector('input');
+            if (!input) return;
+
+            btn.addEventListener('click', function () {
+                var isPassword = input.type === 'password';
+                input.type = isPassword ? 'text' : 'password';
+                btn.querySelector('.eye-open').hidden = isPassword;
+                btn.querySelector('.eye-closed').hidden = !isPassword;
+                btn.setAttribute('aria-label', isPassword ? 'Ocultar senha' : 'Mostrar senha');
+            });
+        });
+    }
+
     document.addEventListener("DOMContentLoaded", function () {
         setDynamicTitles();
         initCharts();
         setupHtmxListLoading();
+        setupPasswordToggles();
     });
 })();

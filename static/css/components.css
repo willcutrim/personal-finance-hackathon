@@ -1,9 +1,14 @@
-.card,
+﻿.card,
 .panel {
     background: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-soft);
+    min-width: 0;
+}
+
+.panel {
+    overflow: hidden;
 }
 
 .card {
@@ -290,7 +295,6 @@ textarea:focus {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
-    min-width: 680px;
 }
 
 .table th,
@@ -450,7 +454,7 @@ textarea:focus {
 .kpi-grid {
     display: grid;
     gap: 14px;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
 }
 
 .kpi-card {
@@ -539,6 +543,7 @@ textarea:focus {
     z-index: 100;
 }
 
+
 .confirm-modal[hidden] {
     display: none !important;
 }
@@ -623,14 +628,73 @@ table:not(.table) td {
     text-align: left;
 }
 
-@media (max-width: 1200px) {
-    .kpi-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+@media (max-width: 640px) {
+    .kpi-value {
+        font-size: 1.25rem;
+    }
+
+    .table-actions {
+        flex-wrap: wrap;
+    }
+
+    .table-actions .btn {
+        padding: 6px 8px;
+        font-size: 0.76rem;
+    }
+
+    .btn {
+        padding: 8px 12px;
+        font-size: 0.84rem;
+    }
+
+    .panel {
+        padding: 14px;
+    }
+
+    .card {
+        padding: 14px;
+    }
+
+    .panel-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+
+    .pagination {
+        justify-content: center;
     }
 }
 
-@media (max-width: 640px) {
-    .kpi-grid {
-        grid-template-columns: 1fr;
-    }
+/* ── Password toggle ────────────────────────────────────────────────────── */
+.password-field-wrapper {
+    position: relative;
+}
+
+.password-field-wrapper input {
+    padding-right: 42px;
+}
+
+.password-toggle-btn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    padding: 4px;
+    cursor: pointer;
+    color: var(--color-text-muted);
+    display: inline-flex;
+    align-items: center;
+    border-radius: 6px;
+    width: auto;
+    height: auto;
+    line-height: 1;
+    z-index: 2;
+}
+
+.password-toggle-btn:hover {
+    color: var(--color-text);
+    background: var(--color-surface-soft);
 }

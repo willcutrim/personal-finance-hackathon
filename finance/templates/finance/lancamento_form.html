@@ -1,0 +1,12 @@
+{% extends 'base_formulario.html' %}
+
+{% block form_page_title %}{% if object %}Editar Lançamento{% else %}Novo Lançamento{% endif %}{% endblock %}
+{% block form_heading %}{% if object %}Editar Lançamento{% else %}Novo Lançamento{% endif %}{% endblock %}
+{% block form_subtitle %}<p class="text-muted">Registre uma receita ou despesa.</p>{% endblock %}
+
+{% block confirm_submit %}false{% endblock %}
+
+{% block submit_label %}Salvar lançamento{% endblock %}
+
+{% block cancel_url %}{% url 'finance:lancamento_list' %}{% endblock %}
+{% block cancel_label %}Cancelar{% endblock %}

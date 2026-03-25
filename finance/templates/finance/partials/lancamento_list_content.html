@@ -1,0 +1,89 @@
+{% extends 'partials/base_list_content.html' %}
+
+{% block list_filters %}
+<form
+    id="list-filter-form"
+    method="get"
+    class="panel mb-3 p-3"
+    {% if list_hx_enabled %}
+    hx-get=""
+    hx-target="{{ list_hx_target }}"
+    hx-swap="{{ list_hx_swap }}"
+    hx-push-url="{{ list_hx_push_url }}"
+    hx-trigger="change, submit"
+    {% endif %}
+>
+    <div class="row g-2 align-items-end">
+        <div class="col-12 col-sm-6 col-md-3">
+            {{ filter_form.tipo.label_tag }}
+            {{ filter_form.tipo }}
+        </div>
+        <div class="col-12 col-sm-6 col-md-3">
+            {{ filter_form.categoria.label_tag }}
+            {{ filter_form.categoria }}
+        </div>
+        <div class="col-12 col-sm-6 col-md-2">
+            {{ filter_form.data_inicio.label_tag }}
+            {{ filter_form.data_inicio }}
+        </div>
+        <div class="col-12 col-sm-6 col-md-2">
+            {{ filter_form.data_fim.label_tag }}
+            {{ filter_form.data_fim }}
+        </div>
+        <div class="col-12 col-md-2 d-flex gap-2">
+            <button type="submit" class="btn btn-secondary flex-fill">Filtrar</button>
+            <a href="{% url 'finance:lancamento_list' %}" class="btn btn-outline flex-fill">Limpar</a>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block list_header %}
+<header class="panel-header d-flex align-items-center justify-content-between">
+    <div>
+        <h2 class="panel-title">Lançamentos</h2>
+        <p class="panel-subtitle">{{ paginator.count }} lançamento{{ paginator.count|pluralize:"s" }} encontrado{{ paginator.count|pluralize:"s" }}</p>
+    </div>
+</header>
+{% endblock %}
+
+{% block table_head %}
+<th>Data</th>
+<th>Descrição</th>
+<th>Categoria</th>
+<th>Tipo</th>
+<th>Valor</th>
+<th class="table-actions-head">Ações</th>
+{% endblock %}
+
+{% block table_rows %}
+{% for lancamento in lancamentos %}
+<tr>
+    <td class="text-muted">{{ lancamento.data|date:'d/m/Y' }}</td>
+    <td><strong>{{ lancamento.descricao }}</strong></td>
+    <td>{{ lancamento.categoria.nome }}</td>
+    <td>
+        <span class="badge {% if lancamento.tipo == 'RECEITA' %}badge-receita{% else %}badge-despesa{% endif %}">
+            {{ lancamento.get_tipo_display }}
+        </span>
+    </td>
+    <td class="financial-number {% if lancamento.tipo == 'RECEITA' %}text-success{% else %}text-danger{% endif %}">
+        {% if lancamento.tipo == 'RECEITA' %}+{% else %}-{% endif %}R$ {{ lancamento.valor|floatformat:2 }}
+    </td>
+    <td class="table-actions">
+        <button
+                class="btn btn-secondary"
+                hx-get="{% url 'finance:lancamento_update' lancamento.pk %}"
+                hx-target="#lancamento-modal-container"
+                hx-swap="innerHTML"
+            >Editar</button>
+        <button
+                class="btn btn-danger"
+                hx-get="{% url 'finance:lancamento_delete' lancamento.pk %}"
+                hx-target="#lancamento-modal-container"
+                hx-swap="innerHTML"
+            >Excluir</button>
+    </td>
+</tr>
+{% endfor %}
+{% endblock %}

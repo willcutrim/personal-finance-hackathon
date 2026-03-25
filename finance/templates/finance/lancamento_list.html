@@ -1,0 +1,52 @@
+{% extends 'base_list.html' %}
+
+{% block page_title %}{{ page_title }}{% endblock %}
+{% block page_subtitle %}{{ page_subtitle }}{% endblock %}
+
+{% block page_header %}
+<header class="page-header">
+    <div>
+        <h1 class="page-title" id="pageHeaderTitle">{{ page_title }}</h1>
+        <p class="page-subtitle" id="pageHeaderSubtitle">{{ page_subtitle }}</p>
+    </div>
+    <div class="page-header-tools">
+        <button
+            class="btn btn-success"
+            hx-get="{% url 'finance:lancamento_create_receita' %}"
+            hx-target="#lancamento-modal-container"
+            hx-swap="innerHTML"
+        >+ Receita</button>
+        <button
+            class="btn btn-expense"
+            hx-get="{% url 'finance:lancamento_create_despesa' %}"
+            hx-target="#lancamento-modal-container"
+            hx-swap="innerHTML"
+        >+ Despesa</button>
+    </div>
+</header>
+{% endblock %}
+
+{% block list_before %}
+<div id="lancamento-modal-container"></div>
+{% endblock %}
+
+{% block list_partial_template %}finance/partials/lancamento_list_content.html{% endblock %}
+
+{% block extra_js %}
+<script>
+document.body.addEventListener('htmx:afterSwap', function (evt) {
+    if (evt.detail.target.id !== 'lancamento-modal-container') return;
+    var el = document.getElementById('lancamentoModal') || document.getElementById('deleteModal');
+    if (!el) return;
+    // Limpar backdrop residual de re-render por erro de validação
+    document.querySelectorAll('.modal-backdrop').forEach(function (b) { b.remove(); });
+    document.body.classList.remove('modal-open');
+    document.body.style.removeProperty('overflow');
+    document.body.style.removeProperty('padding-right');
+    new bootstrap.Modal(el).show();
+});
+document.addEventListener('lancamentoChanged', function () {
+    window.location.reload();
+});
+</script>
+{% endblock %}

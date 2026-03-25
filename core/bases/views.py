@@ -1,4 +1,3 @@
-from time import sleep
 from django.core.exceptions import ValidationError
 from django.utils.cache import patch_vary_headers
 from django.views.generic import FormView, ListView, TemplateView
@@ -82,7 +81,6 @@ class BaseServiceListView(AppLoginRequiredMixin, HtmxRequestMixin, ServiceMixin,
         return f"#{self.list_container_id}"
 
     def get_queryset(self):
-        sleep(5)
         return self.get_service().list(**self.get_service_filters())
 
     def get_context_data(self, **kwargs):
