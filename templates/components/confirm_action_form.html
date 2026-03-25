@@ -1,0 +1,90 @@
+{% with form_identifier=form_id|default:'confirm-form' %}
+<form id="{{ form_identifier }}" method="post">
+    {% csrf_token %}
+    <div class="actions row g-2 mt-3">
+        <div class="col-12 col-sm-auto">
+            <button
+                type="submit"
+                class="btn btn-danger w-100"
+                data-confirm-title="{{ confirm_title|default:'Confirmar ação' }}"
+                data-confirm-message="{{ confirm_message|default:'Tem certeza que deseja continuar?' }}"
+                data-confirm-button="{{ confirm_button_label|default:submit_label|default:'Confirmar' }}"
+            >
+                {{ submit_label|default:'Confirmar' }}
+            </button>
+        </div>
+        <div class="col-12 col-sm-auto">
+            <a href="{{ cancel_url }}" class="btn btn-secondary w-100">{{ cancel_label|default:'Cancelar' }}</a>
+        </div>
+    </div>
+</form>
+
+<div id="{{ form_identifier }}-confirm-modal" class="confirm-modal" hidden>
+    <div class="confirm-modal-content">
+        <h3 id="{{ form_identifier }}-confirm-title">Confirmação</h3>
+        <p id="{{ form_identifier }}-confirm-message">Tem certeza que deseja continuar?</p>
+        <div class="actions row g-2">
+            <div class="col-12 col-sm-auto">
+                <button type="button" id="{{ form_identifier }}-confirm-btn" class="btn btn-danger w-100">Confirmar</button>
+            </div>
+            <div class="col-12 col-sm-auto">
+                <button type="button" id="{{ form_identifier }}-cancel-btn" class="btn btn-secondary w-100">Voltar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function () {
+    const form = document.getElementById("{{ form_identifier }}");
+    const modal = document.getElementById("{{ form_identifier }}-confirm-modal");
+    const submitBtn = form ? form.querySelector("button[type='submit']") : null;
+    const confirmBtn = document.getElementById("{{ form_identifier }}-confirm-btn");
+    const cancelBtn = document.getElementById("{{ form_identifier }}-cancel-btn");
+    const title = document.getElementById("{{ form_identifier }}-confirm-title");
+    const message = document.getElementById("{{ form_identifier }}-confirm-message");
+    let submitting = false;
+
+    function setLoadingState() {
+        if (submitting) return;
+        submitting = true;
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.classList.add("is-loading");
+            submitBtn.innerHTML = '<span class="btn-spinner" aria-hidden="true"></span><span>Processando...</span>';
+        }
+        if (confirmBtn) {
+            confirmBtn.disabled = true;
+            confirmBtn.classList.add("is-loading");
+            confirmBtn.innerHTML = '<span class="btn-spinner" aria-hidden="true"></span><span>Processando...</span>';
+        }
+    }
+
+    if (!form || !modal || !submitBtn || !confirmBtn || !cancelBtn) return;
+
+    form.addEventListener("submit", function (event) {
+        event.preventDefault();
+        title.textContent = submitBtn.dataset.confirmTitle || "Confirmação";
+        message.textContent = submitBtn.dataset.confirmMessage || "Tem certeza que deseja continuar?";
+        confirmBtn.textContent = submitBtn.dataset.confirmButton || "Confirmar";
+        modal.hidden = false;
+    });
+
+    cancelBtn.addEventListener("click", function () {
+        modal.hidden = true;
+    });
+
+    modal.addEventListener("click", function (event) {
+        if (event.target === modal) {
+            modal.hidden = true;
+        }
+    });
+
+    confirmBtn.addEventListener("click", function () {
+        modal.hidden = true;
+        setLoadingState();
+        form.submit();
+    });
+})();
+</script>
+{% endwith %}

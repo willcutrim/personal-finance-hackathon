@@ -1,0 +1,9 @@
+<div class="empty-state">
+    <h3>{{ title|default:'Nada por aqui ainda' }}</h3>
+    <p>{{ description|default:'Assim que você cadastrar informações, elas aparecerão neste painel.' }}</p>
+    {% if action_url %}
+    <div class="actions">
+        <a class="btn" href="{{ action_url }}">{{ action_label|default:'Criar agora' }}</a>
+    </div>
+    {% endif %}
+</div>

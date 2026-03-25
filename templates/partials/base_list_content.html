@@ -1,0 +1,40 @@
+<div id="{{ list_container_id }}" class="list-content">
+    <div class="list-loading-overlay" aria-hidden="true">
+        <div class="list-loading-overlay-content">
+            <span class="app-spinner" aria-hidden="true"></span>
+            <span>Atualizando listagem...</span>
+        </div>
+    </div>
+
+    <div class="list-content-body">
+        {% block list_filters %}{% endblock %}
+
+        <section class="panel">
+            {% block list_header %}{% endblock %}
+            {% block list_actions %}{% endblock %}
+
+            {% if object_list %}
+                <div class="table-wrap table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                {% block table_head %}{% endblock %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% block table_rows %}{% endblock %}
+                        </tbody>
+                    </table>
+                </div>
+
+                {% block list_pagination %}
+                    {% include 'includes/pagination.html' %}
+                {% endblock %}
+            {% else %}
+                {% block list_empty %}
+                    {% include 'includes/empty_state.html' with title=empty_title description=empty_description action_url=empty_action_url action_label=empty_action_label %}
+                {% endblock %}
+            {% endif %}
+        </section>
+    </div>
+</div>

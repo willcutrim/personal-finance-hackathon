@@ -1,0 +1,42 @@
+{% if messages %}
+<section class="alerts-stack" aria-label="Mensagens do sistema">
+    {% for message in messages %}
+        {% if 'error' in message.tags %}
+            <div class="form-alert form-alert-error d-flex align-items-center justify-content-between">
+                <span>{{ message }}</span>
+                <button class="alert-close" onclick="closeAlert(this)">×</button>
+            </div>
+        {% elif 'warning' in message.tags %}
+            <div class="form-alert form-alert-warning d-flex align-items-center justify-content-between">
+                <span>{{ message }}</span>
+                <button class="alert-close" onclick="closeAlert(this)">×</button>
+            </div>
+        {% elif 'success' in message.tags %}
+            <div class="form-alert form-alert-success d-flex align-items-center justify-content-between">
+                <span>{{ message }}</span>
+                <button class="alert-close" onclick="closeAlert(this)">×</button>
+            </div>
+        {% else %}
+            <div class="form-alert form-alert-info d-flex align-items-center justify-content-between">
+                <span>{{ message }}</span>
+                <button class="alert-close" onclick="closeAlert(this)">×</button>
+            </div>
+        {% endif %}
+    {% endfor %}
+</section>
+{% endif %}
+
+<script>
+    setTimeout(() => {
+        document.querySelectorAll('.form-alert').forEach(el => closeAlert({ parentElement: el }));
+    }, 5000);
+
+    function closeAlert(button) {
+        const alert = button.parentElement
+        alert.classList.add("closing")
+
+        setTimeout(() => {
+            alert.remove()
+        }, 400)
+    }
+</script>

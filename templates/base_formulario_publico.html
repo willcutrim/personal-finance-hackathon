@@ -1,0 +1,188 @@
+{% extends 'base_public.html' %}
+
+{% block title %}{% block form_page_title %}Formulário{% endblock %}{% endblock %}
+{% block body_class %}public-layout public-layout-auth{% endblock %}
+{% block public_main_class %}public-main public-main-auth{% endblock %}
+{% block public_alerts %}{% endblock %}
+
+{% block content %}
+<section class="auth-form-section">
+    <div class="card form-max-sm auth-card">
+        <header class="auth-card-header mb-3">
+            <h1 class="page-title">{% block form_heading %}Formulário{% endblock %}</h1>
+            {% block form_subtitle %}{% endblock %}
+        </header>
+        {% include 'includes/alerts.html' %}
+
+        <form
+            id="base-form"
+            method="{% block form_method %}post{% endblock %}"
+            data-confirm-submit="{% block confirm_submit %}true{% endblock %}"
+            novalidate
+        >
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="form-alert form-alert-error" role="alert">
+                    {% for error in form.non_field_errors %}
+                        <div>{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <div id="base-form-alert" class="form-alert form-alert-error" hidden></div>
+
+            {% block form_fields %}
+                <div class="form-layout row g-3">
+                    {% for field in form.visible_fields %}
+                        <div class="form-field col-12 {% if field.errors %}has-error{% endif %}">
+                            <label for="{{ field.id_for_label }}">
+                                {{ field.label }}
+                                {% if field.field.required %}<span class="required-mark">*</span>{% endif %}
+                            </label>
+
+                            {{ field }}
+
+                            {% if field.help_text %}
+                                <small class="field-help">{{ field.help_text }}</small>
+                            {% endif %}
+
+                            {% for error in field.errors %}
+                                <small class="field-error">{{ error }}</small>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endblock %}
+
+            <div class="actions d-flex flex-wrap gap-2 mt-3">
+                <button
+                    id="base-form-submit"
+                    type="submit"
+                    class="btn"
+                    data-confirm-title="{% block confirm_title %}Confirmação{% endblock %}"
+                    data-confirm-message="{% block confirm_message %}Deseja continuar com esta ação?{% endblock %}"
+                    data-confirm-button="{% block confirm_button_label %}Confirmar{% endblock %}"
+                    data-invalid-message="{% block invalid_message %}Revise os campos obrigatórios antes de continuar.{% endblock %}"
+                >
+                    {% block submit_label %}Salvar{% endblock %}
+                </button>
+
+                <a href="{% block cancel_url %}#{% endblock %}" class="btn btn-secondary">
+                    {% block cancel_label %}Cancelar{% endblock %}
+                </a>
+            </div>
+        </form>
+    </div>
+</section>
+
+<div id="base-form-confirm-modal" class="confirm-modal" hidden>
+    <div class="confirm-modal-content">
+        <h3 id="base-form-confirm-title">Confirmação</h3>
+        <p id="base-form-confirm-message">Deseja continuar com esta ação?</p>
+        <div class="actions">
+            <button type="button" id="base-form-confirm-btn" class="btn">Confirmar</button>
+            <button type="button" id="base-form-cancel-btn" class="btn btn-secondary">Voltar</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+    const form = document.getElementById("base-form");
+    if (!form) return;
+
+    const submitBtn = document.getElementById("base-form-submit");
+    const alertBox = document.getElementById("base-form-alert");
+    const modal = document.getElementById("base-form-confirm-modal");
+    const modalTitle = document.getElementById("base-form-confirm-title");
+    const modalMessage = document.getElementById("base-form-confirm-message");
+    const confirmBtn = document.getElementById("base-form-confirm-btn");
+    const cancelBtn = document.getElementById("base-form-cancel-btn");
+
+    const shouldConfirm = form.dataset.confirmSubmit === "true";
+    let confirmed = false;
+    let submitting = false;
+
+    function setSubmitLoadingState() {
+        if (!submitBtn || submitting) return;
+        submitting = true;
+        submitBtn.disabled = true;
+        submitBtn.classList.add("is-loading");
+        submitBtn.innerHTML = '<span class="btn-spinner" aria-hidden="true"></span><span>Salvando...</span>';
+    }
+
+    function showAlert(message) {
+        if (!alertBox) return;
+        alertBox.textContent = message;
+        alertBox.hidden = false;
+    }
+
+    function clearAlert() {
+        if (!alertBox) return;
+        alertBox.textContent = "";
+        alertBox.hidden = true;
+    }
+
+    function openModal() {
+        if (modal) modal.hidden = false;
+    }
+
+    function closeModal() {
+        if (modal) modal.hidden = true;
+    }
+
+    if (cancelBtn) {
+        cancelBtn.addEventListener("click", closeModal);
+    }
+
+    if (modal) {
+        modal.addEventListener("click", function (event) {
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+    }
+
+    if (confirmBtn) {
+        confirmBtn.addEventListener("click", function () {
+            confirmed = true;
+            closeModal();
+            setSubmitLoadingState();
+            form.submit();
+        });
+    }
+
+    form.addEventListener("submit", function (event) {
+        clearAlert();
+        form.classList.add("was-validated");
+
+        if (!form.checkValidity()) {
+            event.preventDefault();
+            const invalidMessage = submitBtn?.dataset.invalidMessage || "Revise os campos obrigatórios.";
+            showAlert(invalidMessage);
+            return;
+        }
+
+        if (shouldConfirm && !confirmed) {
+            event.preventDefault();
+            if (modalTitle) {
+                modalTitle.textContent = submitBtn?.dataset.confirmTitle || "Confirmação";
+            }
+            if (modalMessage) {
+                modalMessage.textContent = submitBtn?.dataset.confirmMessage || "Deseja continuar com esta ação?";
+            }
+            if (confirmBtn) {
+                confirmBtn.textContent = submitBtn?.dataset.confirmButton || "Confirmar";
+            }
+            openModal();
+            return;
+        }
+
+        setSubmitLoadingState();
+    });
+})();
+</script>
+{% endblock %}

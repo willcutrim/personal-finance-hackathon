@@ -1,3 +1,6 @@
+from core.bases.models import BaseModel
+from core.bases.repositories import BaseRepository
+from core.bases.services import BaseService
 from core.bases.views import (
     BaseServiceCreateView,
     BaseServiceDeleteView,
@@ -7,6 +10,9 @@ from core.bases.views import (
 )
 
 __all__ = [
+    "BaseModel",
+    "BaseRepository",
+    "BaseService",
     "BaseTemplateView",
     "BaseServiceListView",
     "BaseServiceCreateView",

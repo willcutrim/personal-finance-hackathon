@@ -1,0 +1,45 @@
+<header class="topbar">
+    <div class="topbar-left">
+        <button type="button" class="btn btn-secondary btn-icon sidebar-toggle" data-sidebar-toggle aria-label="Abrir menu">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+        <strong class="topbar-page-title" id="topbarPageTitle">Dashboard</strong>
+    </div>
+
+    <label class="topbar-search" for="topbar-search-input">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="m21 21-4.3-4.3m1.8-5.2a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <input id="topbar-search-input" type="search" placeholder="Buscar lançamentos, categorias ou valores..." />
+    </label>
+
+    <div class="topbar-right">
+        <div class="dropdown">
+            <button class="btn btn-secondary btn-icon" type="button" data-dropdown-toggle="notifications" aria-label="Notificações">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.2V11a6 6 0 1 0-12 0v3.2a2 2 0 0 1-.6 1.4L4 17h5m6 0v1a3 3 0 1 1-6 0v-1m6 0H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="dropdown-menu" data-dropdown-menu="notifications" hidden>
+                <div class="dropdown-item">Sem novas notificações</div>
+            </div>
+        </div>
+
+        {% if user.is_authenticated %}
+        <div class="dropdown">
+            <button class="btn btn-secondary" type="button" data-dropdown-toggle="user-menu">
+                <span class="topbar-user-avatar">{{ user.username|default:'U'|slice:':1'|upper }}</span>
+                {{ user.username|default:'Usuário' }}
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="dropdown-menu" data-dropdown-menu="user-menu" hidden>
+                <a class="dropdown-item" href="{% url 'accounts:settings' %}">Configurações</a>
+                <a class="dropdown-item" href="{% url 'accounts:profile' %}">Meu perfil</a>
+                <a class="dropdown-item" href="{% url 'finance:lancamento_list' %}">Lançamentos</a>
+                <form method="post" action="{% url 'accounts:logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="dropdown-item">Sair</button>
+                </form>
+            </div>
+        </div>
+        {% else %}
+        <a class="btn" href="{% url 'accounts:login' %}">Entrar</a>
+        {% endif %}
+    </div>
+</header>

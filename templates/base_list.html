@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% block list_before %}{% endblock %}
+
+    {% include list_partial_template %}
+
+    {% block list_after %}{% endblock %}
+{% endblock %}

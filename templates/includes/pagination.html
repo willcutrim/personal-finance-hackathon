@@ -1,0 +1,42 @@
+{% if page_obj and page_obj.paginator.num_pages > 1 %}
+<nav class="pagination" aria-label="Paginação">
+    {% if page_obj.has_previous %}
+        <a
+            class="pagination-link"
+            href="{% querystring page=page_obj.previous_page_number %}"
+            {% if list_hx_enabled %}
+            hx-get="{% querystring page=page_obj.previous_page_number %}"
+            hx-target="{{ list_hx_target }}"
+            hx-swap="{{ list_hx_swap }}"
+            hx-push-url="{{ list_hx_push_url }}"
+            {% endif %}
+        >Anterior</a>
+    {% endif %}
+
+    {% for num in page_obj.paginator.page_range %}
+        <a
+            class="pagination-link {% if page_obj.number == num %}is-active{% endif %}"
+            href="{% querystring page=num %}"
+            {% if list_hx_enabled %}
+            hx-get="{% querystring page=num %}"
+            hx-target="{{ list_hx_target }}"
+            hx-swap="{{ list_hx_swap }}"
+            hx-push-url="{{ list_hx_push_url }}"
+            {% endif %}
+        >{{ num }}</a>
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+        <a
+            class="pagination-link"
+            href="{% querystring page=page_obj.next_page_number %}"
+            {% if list_hx_enabled %}
+            hx-get="{% querystring page=page_obj.next_page_number %}"
+            hx-target="{{ list_hx_target }}"
+            hx-swap="{{ list_hx_swap }}"
+            hx-push-url="{{ list_hx_push_url }}"
+            {% endif %}
+        >Próxima</a>
+    {% endif %}
+</nav>
+{% endif %}

@@ -1,3 +1,3 @@
-from django.db import models
+from core.bases.models import BaseModel
 
-# Create your models here.
+__all__ = ["BaseModel"]
