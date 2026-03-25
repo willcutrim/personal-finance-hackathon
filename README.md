@@ -51,8 +51,8 @@ pip install -r requirements.txt
 # 4. Aplicar migrações do banco de dados
 python manage.py migrate
 
-# 6. Iniciar o servidor de desenvolvimento
-python manage.py runserver
+# 6. Iniciar o servidor de desenvolvimento (DEBUG = FALSE)
+python manage.py runserver --insecure
 ```
 
 Acesse o sistema em **http://localhost:8000**. Após o login, você será redirecionado ao **Login**.
