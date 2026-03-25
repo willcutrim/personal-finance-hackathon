@@ -102,7 +102,7 @@ class CategoriaDeleteView(AppLoginRequiredMixin, FlashMessageMixin, ServiceObjec
 
 # ── Lançamentos ────────────────────────────────────────────────────────────────
 
-class LancamentoListView(BaseServiceListView):
+class LancamentoListView(FlashMessageMixin, BaseServiceListView):
     template_name = 'finance/lancamento_list.html'
     partial_template_name = 'finance/partials/lancamento_list_content.html'
     context_object_name = 'lancamentos'

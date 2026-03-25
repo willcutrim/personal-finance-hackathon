@@ -1,12 +1,13 @@
 from datetime import date
 
 from core.bases.views import BaseTemplateView
+from core.mixins import FlashMessageMixin
 from dashboard.forms import DashboardFilterForm
 from finance.models import TipoChoices
 from finance.services.saldo_service import SaldoService
 
 
-class PainelView(BaseTemplateView):
+class PainelView(FlashMessageMixin, BaseTemplateView):
     template_name = 'dashboard/painel.html'
 
     def get_filter_form(self):
@@ -21,6 +22,11 @@ class PainelView(BaseTemplateView):
         if form.is_valid():
             data_inicio = form.cleaned_data.get('data_inicio')
             data_fim = form.cleaned_data.get('data_fim')
+
+            if data_fim and data_inicio and data_fim < data_inicio:
+                self.add_error_message('A data de fim deve ser maior ou igual à data de início.')
+                data_inicio = None
+                data_fim = None
         return data_inicio, data_fim
 
     def get_context_data(self, **kwargs):

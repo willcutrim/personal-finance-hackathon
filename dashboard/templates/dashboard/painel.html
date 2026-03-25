@@ -200,12 +200,7 @@
                 </table>
             </div>
             {% else %}
-            {% include 'includes/empty_state.html' with
-                title='Nenhum lançamento ainda'
-                description='Crie categorias e registre seus lançamentos para visualizar o dashboard.'
-                action_url=''
-                action_label=''
-            %}
+            {% include 'includes/empty_state.html' with title='Nenhum lançamento ainda' description='Crie categorias e registre seus lançamentos para visualizar o dashboard.' action_url='' action_label='' %}
             {% endif %}
         </article>
     </div>
