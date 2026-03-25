@@ -16,6 +16,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_htmx',
+    'account',
+    'core',
+    'finance',
+    'dashboard'
 ]
 
 MIDDLEWARE = [
